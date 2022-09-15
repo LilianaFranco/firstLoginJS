@@ -11,4 +11,6 @@ function normalizarEmail(email) {}
 /* -------------------------------- password -------------------------------- */
 function validarContrasenia(contrasenia) {}
 
-function compararContrasenias(contrasenia_1, contrasenia_2) {}
+function compararContrasenias(contrasenia_1, contrasenia_2) {
+    return contrasenia_1 === contrasenia_2;
+}
