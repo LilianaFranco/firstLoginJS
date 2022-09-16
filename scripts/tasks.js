@@ -34,6 +34,8 @@ window.addEventListener("load", function () {
       'Authorization': jwt
     });
 
+    console.log(jwt)
+
     const settings = {
       method: 'GET',
       headers: myHeader,
@@ -54,20 +56,43 @@ window.addEventListener("load", function () {
   }
 
   obtenerNombreUsuario();
-  
+
 
   /* -------------------------------------------------------------------------- */
   /*                 FUNCIÓN 3 - Obtener listado de tareas [GET]                */
   /* -------------------------------------------------------------------------- */
 
-  function consultarTareas() { }
-
   /* -------------------------------------------------------------------------- */
   /*                    FUNCIÓN 4 - Crear nueva tarea [POST]                    */
   /* -------------------------------------------------------------------------- */
 
-  const formCrearTarea = document.forms[0];
-  formCrearTarea.addEventListener("submit", function (event) { });
+  const btnCrearTarea = document.getElementById("crearTarea");
+  btnCrearTarea.addEventListener("click", function (event) { 
+    
+    const apiURL = "https://ctd-todo-api.herokuapp.com/v1/tasks";
+    const task = JSON.stringify(document.getElementById("nuevaTarea").value)
+    console.log(jwt)
+
+    const configuraciones = {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxpbGlhbmFAbGlsaWFuYS5jb20iLCJpZCI6Njg0MiwiaWF0IjoxNjYzMjk3NTExfQ.2rZCRhr5yIovWAF7OactDI1sofqFaLY-8aaEPdnriZE"
+      },
+      body: JSON.stringify({
+        description: "Aprender Javascript",
+        completed: false
+      })
+    };
+    
+    const repsuestas = fetch(apiURL, configuraciones)
+      .then((respuesta) => respuesta.json())
+      .then((respuesta) => {
+        console.log(respuesta)
+      });
+
+  });
 
   /* -------------------------------------------------------------------------- */
   /*                  FUNCIÓN 5 - Renderizar tareas en pantalla                 */
