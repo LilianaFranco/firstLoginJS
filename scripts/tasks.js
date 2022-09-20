@@ -29,7 +29,7 @@ window.addEventListener("load", function () {
   async function obtenerNombreUsuario() {
     let user;
     const apiURL = "https://ctd-todo-api.herokuapp.com/v1/users/getMe"
-    
+
     const myHeader = new Headers({
       'Authorization': jwt
     });
@@ -49,9 +49,7 @@ window.addEventListener("load", function () {
       .then(response => response.json())
       .then(data => {
         user = JSON.stringify(data.firstName)
-        console.log(user)
         document.getElementById("userName").innerText = user
-        console.log(user.type)
       })
   }
 
@@ -62,47 +60,113 @@ window.addEventListener("load", function () {
   /*                 FUNCIÓN 3 - Obtener listado de tareas [GET]                */
   /* -------------------------------------------------------------------------- */
 
+  function consultarTareas() {
+    const url = "https://ctd-todo-api.herokuapp.com/v1/tasks",
+      configuraciones = {
+        method: "GET",
+        headers: {
+          authorization: jwt,
+        },
+      };
+
+    fetch(url, configuraciones)
+      .then((respuesta) => respuesta.json())
+      .then((tareas) => renderizarTareas(tareas));
+  }
+  consultarTareas();
+
   /* -------------------------------------------------------------------------- */
   /*                    FUNCIÓN 4 - Crear nueva tarea [POST]                    */
   /* -------------------------------------------------------------------------- */
 
-  const btnCrearTarea = document.getElementById("crearTarea");
-  btnCrearTarea.addEventListener("click", function (event) { 
-    
-    const apiURL = "https://ctd-todo-api.herokuapp.com/v1/tasks";
-    const task = JSON.stringify(document.getElementById("nuevaTarea").value)
-    console.log(jwt)
+  const formCrearTarea = document.forms[0];
+  formCrearTarea.addEventListener("submit", function (event) {
+    event.preventDefault();
+    const url = "https://ctd-todo-api.herokuapp.com/v1/tasks";
+    const inputDescription = document.getElementById("nuevaTarea");
 
-    const configuraciones = {
+    configuraciones = {
       method: "POST",
-      mode: "cors",
       headers: {
         "Content-Type": "application/json",
-        "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxpbGlhbmFAbGlsaWFuYS5jb20iLCJpZCI6Njg0MiwiaWF0IjoxNjYzMjk3NTExfQ.2rZCRhr5yIovWAF7OactDI1sofqFaLY-8aaEPdnriZE"
+        authorization: jwt,
       },
       body: JSON.stringify({
-        description: "Aprender Javascript",
-        completed: false
-      })
+        description: inputDescription.value,
+        completed: false,
+      }),
     };
-    
-    const repsuestas = fetch(apiURL, configuraciones)
-      .then((respuesta) => respuesta.json())
-      .then((respuesta) => {
-        console.log(respuesta)
-      });
 
+    inputDescription.value = "";
+    inputDescription.focus();
+
+    fetch(url, configuraciones)
+      .then((response) => response.json())
+      .then((data) => {
+        consultarTareas();
+      });
   });
+
 
   /* -------------------------------------------------------------------------- */
   /*                  FUNCIÓN 5 - Renderizar tareas en pantalla                 */
   /* -------------------------------------------------------------------------- */
-  function renderizarTareas(listado) { }
+  function renderizarTareas(listado) {
+
+    const listadoTareasPendientes = listado.filter((item) => !item.completed)
+    const listadoTareasCompletadas = listado.filter((item) => item.completed)
+
+    listadoTareasPendientes.forEach(function (element, index) {
+      const nuevoItemPendiente = document.createElement("li")
+      const lista = document.getElementsByClassName("tareas-pendientes")
+      lista[0].appendChild(nuevoItemPendiente)
+      nuevoItemPendiente.classList.add("tarea")
+      nuevoItemPendiente.innerHTML = `
+      <div class="descripcion">
+        <p class="nombre">${element.description}</p>
+        <div class="cambios-estados">
+          <button class="change completa" id="${element.id}"><i
+              class="fa-solid fa-rotate-left"></i></button>
+          <button class="borrar" id = "${element.id}"><i class="fa-regular fa-trash-can"></i></button>
+        </div>
+      </div>
+    `
+      document.getElementById("cantidad-pendientes").textContent = index + 1;
+
+    })
+
+    listadoTareasCompletadas.forEach(function (element, index) {
+      const nuevoItemTerminado = document.createElement("li")
+      const lista = document.getElementsByClassName("tareas-terminadas")
+      lista[0].appendChild(nuevoItemTerminado)
+      nuevoItemTerminado.classList.add("tarea")
+      nuevoItemTerminado.innerHTML = `
+          <div class="hecha">
+          <i class="fa-regular fa-circle-check"></i>
+      </div>
+      <div class="descripcion">
+        <p class="nombre">${element.description}</p>
+        <div class="cambios-estados">
+          <button class="borrar" id = "${element.id}"><i class="fa-regular fa-trash-can"></i></button>
+        </div>
+      </div>
+    `
+      document.getElementById("cantidad-finalizadas").textContent = index + 1;
+
+    })
+  }
 
   /* -------------------------------------------------------------------------- */
   /*                  FUNCIÓN 6 - Cambiar estado de tarea [PUT]                 */
   /* -------------------------------------------------------------------------- */
-  function botonesCambioEstado() { }
+  function cambiarEstado() {
+
+
+  }
+
+cambiarEstado(22503);
+
+
 
   /* -------------------------------------------------------------------------- */
   /*                     FUNCIÓN 7 - Eliminar tarea [DELETE]                    */

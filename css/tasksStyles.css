@@ -105,6 +105,13 @@ main h2 {
 }
 
 /* ------------Tareas pendientes */
+
+#cantidad-pendientes {
+    background-color: var(--verde);
+    border-radius: 50vh;
+    padding: .1rem .5rem;
+}
+
 .tareas-pendientes .tarea {
     background-color: var(--app-grey);
     margin-bottom: .7rem;
